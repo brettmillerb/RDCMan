@@ -9,11 +9,11 @@ https://kevinmarquette.github.io/2017-03-04-Powershell-DSL-example-RDCMan/
 RDCFile "Server List" {
     RDCGroup "Group001" {
         RDCServer $comp1
-        RDCServer $comp1
+        RDCServer $comp2
     }
     RDCGroup "Group002" {
-        RDCServer $comp1
-        RDCServer $comp1
+        RDCServer $comp4
+        RDCServer $comp5
     }
 } | Out-File C:\temp\Servers.rdg -encoding utf8
 ```
