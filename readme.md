@@ -15,59 +15,59 @@ RDCFile "Server List" {
         RDCServer "Server003"
         RDCServer "Server004"
     }
-}
+} | Out-File C:\temp\Servers.rdg -encoding utf8
 ```
 ## Output
 
 ```
-        <?xml version="1.0" encoding="utf-8"?>
-        <RDCMan programVersion="2.7" schemaVersion="3">
-            <file>
-                <credentialsProfiles />
+<?xml version="1.0" encoding="utf-8"?>
+<RDCMan programVersion="2.7" schemaVersion="3">
+    <file>
+        <credentialsProfiles />
+        <properties>
+            <name>Server List</name>
+        </properties>
+    <group>
+    <properties>
+        <name>Group001</name>
+    </properties>
+            <server>
                 <properties>
-                    <name>Server List</name>
+                <displayname></displayname>
+                <name></name>
+                <comment></comment>
                 </properties>
-            <group>
-            <properties>
-                <name>Group001</name>
-            </properties>
-                    <server>
-                        <properties>
-                        <displayname></displayname>
-                        <name></name>
-                        <comment></comment>
-                        </properties>
-                    </server>
-                    <server>
-                        <properties>
-                        <displayname></displayname>
-                        <name></name>
-                        <comment></comment>
-                        </properties>
-                    </server>
-            </group>
-            <group>
-            <properties>
-                <name>Group002</name>
-            </properties>
-                    <server>
-                        <properties>
-                        <displayname></displayname>
-                        <name></name>
-                        <comment></comment>
-                        </properties>
-                    </server>
-                    <server>
-                        <properties>
-                        <displayname></displayname>
-                        <name></name>
-                        <comment></comment>
-                        </properties>
-                    </server>
-            </group>
-            </file>
-            <connected />
-            <favorites />
-            <recentlyUsed />
-        </RDCMan>
+            </server>
+            <server>
+                <properties>
+                <displayname></displayname>
+                <name></name>
+                <comment></comment>
+                </properties>
+            </server>
+    </group>
+    <group>
+    <properties>
+        <name>Group002</name>
+    </properties>
+            <server>
+                <properties>
+                <displayname></displayname>
+                <name></name>
+                <comment></comment>
+                </properties>
+            </server>
+            <server>
+                <properties>
+                <displayname></displayname>
+                <name></name>
+                <comment></comment>
+                </properties>
+            </server>
+    </group>
+    </file>
+    <connected />
+    <favorites />
+    <recentlyUsed />
+</RDCMan>
 ```

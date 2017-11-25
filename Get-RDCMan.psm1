@@ -1,4 +1,4 @@
-function Get-RDCManFile {
+function Get-RDCFile {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true,
@@ -11,8 +11,8 @@ function Get-RDCManFile {
     )
     process {
         @"
-        <?xml version="1.0" encoding="utf-8"?>
-        <RDCMan programVersion="2.7" schemaVersion="3">
+<?xml version="1.0" encoding="utf-8"?>
+<RDCMan programVersion="2.7" schemaVersion="3">
             <file>
                 <credentialsProfiles />
                 <properties>
