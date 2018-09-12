@@ -1,8 +1,10 @@
 # Remote Desktop Manager File Generator ###
 
-Based upon Kevin Marquette's RDCMan DSL to generate the entire XML for a new file.
+Idea taken from Kevin Marquette's RDCMan DSL to generate the entire XML for a new file.
 
 https://kevinmarquette.github.io/2017-03-04-Powershell-DSL-example-RDCMan/
+
+Reworked by [Chris Dent - Indented Automation](https://github.com/indented-automation)
 
 ## Usage
 
