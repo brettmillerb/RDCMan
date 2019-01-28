@@ -1,3 +1,5 @@
+# Development root module
+
 $private = @(
     'ADSI\GetAdsiComputer'
     'ADSI\GetAdsiObject'
@@ -25,6 +27,7 @@ $public = @(
     'DSL\RdcConfiguration'
     'DSL\RdcDocument'
     'DSL\RdcGroup'
+    'DSL\RdcLogonCredential'
 )
 
 $functionsToExport = foreach ($command in $public) {

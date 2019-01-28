@@ -27,6 +27,13 @@ function ADConfiguration {
         [Hashtable]$ADConfiguration
     )
 
+    try {
+        # Get the value of the parentNode variable from the parent scope(s)
+        $parentNode = Get-Variable currentNode -ValueOnly -ErrorAction Stop
+    } catch {
+        throw ('{0} must be nested in RdcDocument or RdcGroup: {1}' -f $myinvocation.InvocationName, $_.Exception.Message)
+    }
+
     foreach ($key in $ADConfiguration.Keys) {
         New-Variable -Name ('RdcAD{0}' -f $key) -Value $ADConfiguration[$key] -Scope 1 -Force
     }
