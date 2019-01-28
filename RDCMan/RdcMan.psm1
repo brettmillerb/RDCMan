@@ -1,10 +1,30 @@
+$private = @(
+    'ADSI\GetAdsiComputer'
+    'ADSI\GetAdsiObject'
+    'ADSI\GetAdsiOrganizationalUnit'
+    'ADSI\GetAdsiRootDSE'
+    'ADSI\NewDirectoryEntry'
+    'CommandAdapter\GetADComputer'
+    'CommandAdapter\GetADObject'
+    'CommandAdapter\GetADOrganizationalUnit'
+)
+
+foreach ($command in $private) {
+    . ('{0}\private\{1}.ps1' -f $psscriptroot, $command)
+
+    Split-Path $command -Leaf
+}
+
 $public = @(
-    'Chocolatey\Find-ChocoPackage'
-    'Chocolatey\Publish-ChocoPackage'
-    'Chocolatey\Test-ChocoReplication'
-    'Security\Get-Secure'
-    'Security\New-Password'
-    'Security\Set-Secure'
+    'Configuration\Get-RdcConfiguration'
+    'Configuration\Set-RdcConfiguration'
+    'DSL\ADConfiguration'
+    'DSL\RdcADComputer'
+    'DSL\RdcADGroup'
+    'DSL\RdcComputer'
+    'DSL\RdcConfiguration'
+    'DSL\RdcDocument'
+    'DSL\RdcGroup'
 )
 
 $functionsToExport = foreach ($command in $public) {
@@ -13,4 +33,7 @@ $functionsToExport = foreach ($command in $public) {
     Split-Path $command -Leaf
 }
 
-Export-ModuleMember -Function ($functionsToExport + 'GetModuleConfiguration')
+. ('{0}\InitializeModule.ps1' -f $psscriptroot)
+InitializeModule
+
+Export-ModuleMember -Function $functionsToExport

@@ -11,10 +11,13 @@ function GetAdsiOrganizationalUnit {
     [CmdletBinding()]
     param (
         # A filter describing the organizational units to find.
-        [String]$Filter = '(objectClass=organizationalUnit)',
+        [String]$Filter,
 
         # The search base for this search.
         [String]$SearchBase,
+
+        # The search scope for the search operation.
+        [System.DirectoryServices.SearchScope]$SearchScope,
 
         # The server to use to execute the search.
         [String]$Server,
@@ -23,24 +26,11 @@ function GetAdsiOrganizationalUnit {
         [PSCredential]$Credential
     )
 
-    if ($Filter -eq '*') {
-        $Filter = '(objectClass=organizationalUnit)'
-    } elseif ($Filter) {
-        $Filter = '(&(objectClass=organizationalUnit){0})' -f $Filter
+    if ($Filter -eq '*' -or -not $Filter) {
+        $psboundparameters['Filter'] = '(objectClass=organizationalUnit)'
+    } else {
+        $psboundparameters['Filter'] = '(&(objectClass=organizationalUnit){0})' -f $Filter
     }
 
-    if (-not $SearchBase) {
-        $null = $psboundparameters.Remove('Filter')
-        $null = $psboundparameters.Remove('SearchBase')
-        $SearchBase = (GetAdsiRootDse @psboundparameters).Properties['defaultNamingContext']
-    }
-
-    $searcher = [ADSISearcher]@{
-        Filter      = $Filter
-        SearchRoot  = $SearchBase
-        SearchScope = 'OneLevel'
-        PageSize    = 1000
-    }
-    $searcher.PropertiesToLoad.AddRange('name', 'description')
-    $searcher.FindAll()
+    GetAdsiObject -Properties 'name', 'description', 'distinguishedName' @psboundparameters
 }

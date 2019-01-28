@@ -1,20 +1,15 @@
-function GetADComputer {
+function GetADObject {
     <#
     .SYNOPSIS
-        Use either the ActiveDirectory module or ADSI to find computer objects.
+        Use either the ActiveDirectory module or ADSI to find arbitrary objects.
     .DESCRIPTION
-        Use either the ActiveDirectory module or ADSI to find computer objects.
+        Use either the ActiveDirectory module or ADSI to find arbitrary objects.
     #>
 
-    [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
+    [CmdletBinding()]
     param (
         # A filter to use for the search. If using the ActiveDirectory module this can either be an LDAP filter, or the specialised form used by the ActiveDirectory module.
-        [Parameter(ParameterSetName = 'UsingFilter')]
         [String]$Filter,
-
-        # When searching by name the names are assembled into a filter for each name using the OR operator.
-        [Parameter(ParameterSetName = 'ByName')]
-        [String[]]$Name,
 
         # A searchbase to use. If a search base is not set, the root of the current domain is used.
         [String]$SearchBase,
@@ -26,10 +21,7 @@ function GetADComputer {
         [String]$Server,
 
         # Credentials to use when connecting to the server.
-        [PSCredential]$Credential,
-
-        # The filter format to use.
-        [String]$FilterFormat = (Get-RdcConfiguration -Name FilterFormat)
+        [PSCredential]$Credential
     )
 
     $null = $psboundparameters.Remove('FilterFormat')
@@ -49,8 +41,8 @@ function GetADComputer {
             $null = $psboundparameters.Remove('Filter')
             $psboundparameters.Add('LdapFilter', $Filter)
         }
-        Get-ADComputer -Properties dnsHostName, displayName @psboundparameters
+        Get-ADComputer @psboundparameters
     } else {
-        GetAdsiComputer @psboundparameters
+        GetAdsiObject @psboundparameters
     }
 }

@@ -3,7 +3,7 @@ function RdcComputer {
     .SYNOPSIS
         Create a computer in the RDCMan document.
     .DESCRIPTION
-
+        Create a computer in the RDCMan document.
     #>
 
     [CmdletBinding(DefaultParameterSetName = 'FromPipeline')]
@@ -19,25 +19,28 @@ function RdcComputer {
         [String]$Comment,
 
         [Parameter(Mandatory, Position = 1, ParameterSetName = 'FromHashtable')]
+        [ValidateScript(
+            {
+                if (-not $_.ContainsKey('Name')) {
+                    throw 'The Name key must be present'
+                }
+                foreach ($key in $_.Keys) {
+                    if ($key -notin 'Name', 'DnsHostName', 'Comment') {
+                        throw ('Invalid key in Properties hashtable. Valid keys are Name, DnsHostName, and Comment')
+                    }
+                }
+                $true
+            }
+        )]
         [Hashtable]$Properties
     )
 
     begin {
         try {
+            # Get the value of the parentNode variable from the parent scope(s)
             $parentNode = Get-Variable currentNode -ValueOnly -ErrorAction Stop
         } catch {
             throw ('{0} must be nested in RdcDocument or RdcGroup: {1}' -f $myinvocation.InvocationName, $_.Exception.Message)
-        }
-
-        if ($pscmdlet.ParameterSetName -eq 'FromHashTable') {
-            foreach ($key in $Properties.Keys) {
-                if ($key -notin 'Name', 'DnsHostName', 'Comment') {
-                    throw ('Invalid key in Properties hashtable. Valid keys are Name, DnsHostName, and Comment')
-                }
-            }
-            if (-not $Properties.ContainsKey('Name')) {
-                throw 'The Name key must be present'
-            }
         }
     }
 
@@ -51,7 +54,7 @@ function RdcComputer {
             $DnsHostName = $Name
         }
 
-        $xElement = [XElement]('
+        $xElement = [System.Xml.Linq.XElement]('
             <server>
                 <properties>
                     <displayname>{0}</displayname>
@@ -60,7 +63,7 @@ function RdcComputer {
                 </properties>
             </server>' -f $Name, $DnsHostName, $Comment)
 
-        if ($parentNode -is [XDocument]) {
+        if ($parentNode -is [System.Xml.Linq.XDocument]) {
             $parentNode.Element('Rdc').Element('connected').AddBeforeSelf($xElement)
         } else {
             $parentNode.Element('properties').AddAfterSelf($xElement)

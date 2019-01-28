@@ -1,7 +1,7 @@
 function GetAdsiComputer {
     <#
     .SYNOPSIS
-        Get an organization unit object using ADSI.
+        Get an computer object using ADSI.
     .DESCRIPTION
         These basic ADSI commands allow the RdcMan document generator to be used without the MS AD module.
 
@@ -11,48 +11,26 @@ function GetAdsiComputer {
     [CmdletBinding()]
     param (
         # A filter describing the computers units to find.
-        [String]$Filter = '(&(objectCategory=computer)(objectClass=computer))',
+        [String]$Filter,
 
         # The search base for this search.
         [String]$SearchBase,
 
-        [System.DirectoryServices.Protocols.SearchScope]$SearchScope = 'OneLevel',
+        # The search scope for the search operation.
+        [System.DirectoryServices.SearchScope]$SearchScope,
 
         # The server to use to execute the search.
         [String]$Server,
 
         # Credentials to use when connecting to the server.
-        [PSCredential]$Credential,
+        [PSCredential]$Credential
     )
 
-    if ($Filter -eq '*') {
-        $Filter = '(&(objectCategory=computer)(objectClass=computer))'
-    } elseif ($Filter) {
-        $Filter = '(&(objectCategory=computer)(objectClass=computer){0})' -f $Filter
-    }
-
-    $params = @{}
-    if ($Server)     { $params.Add('Server', $Server) }
-    if ($Credential) { $params.Add('Credential', $Credential) }
-
-    if ($SearchBase) {
-        $adsiSearchBase = NewDirectoryEntry -DistinguishedName $SearchBase @params
+    if ($Filter -eq '*' -or -not $Filter) {
+        $psboundparameters['Filter'] = '(&(objectCategory=computer)(objectClass=computer))'
     } else {
-        $adsiSearchBase = (GetAdsiRootDse @params).Properties['defaultNamingContext']
+        $psboundparameters['Filter'] = '(&(objectCategory=computer)(objectClass=computer){0})' -f $Filter
     }
 
-    $searcher = [ADSISearcher]@{
-        Filter      = $Filter
-        SearchRoot  = $adsiSearchBase
-        SearchScope = $SearchScope
-        PageSize    = 1000
-    }
-    $searcher.PropertiesToLoad.AddRange(@('name', 'description', 'dnsHostName'))
-    foreach ($searchResult in $searcher.FindAll()) {
-        [PSCustomObject]@{
-            Name        = $searchResult.Properties['name'][0]
-            Description = $searchResult.Properties['description'][0]
-            DnsHostName = $searchResult.Properties['dnsHostName'][0]
-        }
-    }
+    GetAdsiObject -Properties 'name', 'description', 'dnsHostName' @psboundparameters
 }

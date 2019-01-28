@@ -1,4 +1,4 @@
-function GetAdsiRootDSE {
+function GetAdsiRootDse {
     <#
     .SYNOPSIS
         Get a RootDSE node using ADSI.
@@ -10,10 +10,17 @@ function GetAdsiRootDSE {
 
     [CmdletBinding()]
     param (
+        # The server to use for the ADSI connection.
         [String]$Server,
 
+        # Credentials to use when connecting to the server.
         [PSCredential]$Credential
     )
 
-    NewDirectoryEntry -DistinguisedName 'RootDSE' @psboundparameters
+    $rootDSE = NewDirectoryEntry -DistinguishedName 'RootDSE' @psboundparameters
+    $properties = @{}
+    foreach ($property in $rootDSE.Properties.Keys) {
+        $properties.Add($property, $rootDSE.Properties[$property])
+    }
+    [PSCustomObject]$properties
 }

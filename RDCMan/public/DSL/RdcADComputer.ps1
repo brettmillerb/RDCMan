@@ -6,13 +6,24 @@ function RdcADComputer {
         RdcADComputer is used to create computer objects based on a search of Active Directory.
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
     param (
         # The filter which will be used to find computers.
+        [Parameter(Position = 1, ParameterSetName = 'UsingFilter')]
         [String]$Filter = '*',
 
-        # The search base. By default the search is performed from the root of the domain.
-        [String]$SearchBase = (Get-ADDomain).DistinguishedName,
+        # When searching by name the names are assembled into a filter for each name using the OR operator.
+        [Parameter(ParameterSetName = 'ByName')]
+        [String[]]$Name,
+
+        # The search base. By default the search is performed from the root of the current domain.
+        [String]$SearchBase,
+
+        # The server to use for this operation.
+        [String]$Server = (Get-Variable RdcADServer -ValueOnly -ErrorAction SilentlyContinue),
+
+        # Credentials to use when connecting to active directory.
+        [PSCredential]$Credential = (Get-Variable RdcADCredential -ValueOnly -ErrorAction SilentlyContinue),
 
         # If recurse is set, groups will be created representing OUs which contain computer objects.
         [Switch]$Recurse
@@ -24,21 +35,23 @@ function RdcADComputer {
         }
     }
 
-    Write-Verbose ('Adding computers from {0}' -f $SearchBase)
-
     $params = @{
-        Filter      = $Filter
-        Properties  = 'DisplayName', 'dnsHostName', 'IPv4Address'
         SearchBase  = $SearchBase
-        SearchScope = 'OneLevel'
+        SearchScope = ('OneLevel', 'Subtree')[$Recurse.ToBool()]
     }
-    if ($Recurse) {
-        $params.SearchScope = 'Subtree'
+    if ($Name) {
+        $params.Add('Name', $Name)
+    } else {
+        $params.Add('Filter', $Filter)
+    }
+    if ($Server) {
+        $params.Add('Server', $Server)
+    }
+    if ($Credential) {
+        $params.Add('Credential', $Credential)
     }
 
-    # Select to avoid the specialised object type breaking parameter binding.
-    Get-ADComputer @params |
-        Select-Object * |
+    GetADComputer @params |
         Sort-Object Name |
         RdcComputer
 }

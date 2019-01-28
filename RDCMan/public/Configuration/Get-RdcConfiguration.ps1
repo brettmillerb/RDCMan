@@ -3,7 +3,7 @@ function Get-RdcConfiguration {
     .SYNOPSIS
         Get the configuration for the document generator.
     .DESCRIPTION
-
+        Get the configuration for the document generator.
     #>
 
     [CmdletBinding()]

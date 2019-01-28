@@ -6,19 +6,32 @@ function RdcADGroup {
         Create a group node derived from the content of an organisational unit.
     #>
 
-    [CmdletBinding(DefaultParameterSetName = 'ByFilter')]
+    [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
     param (
-        [Parameter(ParameterSetName = 'ByFilter')]
+        # A filter for OU objects.
+        [Parameter(ParameterSetName = 'UsingFilter')]
         [String]$Filter = '*',
 
+        # The identity of a single OU.
         [Parameter(Mandatory, ParameterSetName = 'ByIdentity')]
         [String]$Identity,
 
+        # A filter to apply when evaluating descendent computer objects.
         [String]$ComputerFilter = '*',
 
-        [Parameter(ParameterSetName = 'ByFilter')]
-        [String]$SearchBase = (Get-ADDomain).DistinguishedName,
+        # The search base to use when using a filter.
+        [Parameter(ParameterSetName = 'UsingFilter')]
+        [String]$SearchBase,
 
+        # The server to use for this operation.
+        [String]$Server = (Get-Variable RdcADServer -ValueOnly -ErrorAction SilentlyContinue),
+
+        # Credentials to use when connecting to active directory.
+        [PSCredential]$Credential = (Get-Variable RdcADCredential -ValueOnly -ErrorAction SilentlyContinue),
+
+        # If Recurse is set, groups will be created in the RDC document reprsenting each child organisational unit.
+        #
+        # Organizational units are only included as groups if the oganizational unit contains computer accounts or other organizational units.
         [Switch]$Recurse
     )
 
@@ -40,25 +53,33 @@ function RdcADGroup {
         }
     }
 
-    Get-ADOrganizationalUnit @params | ForEach-Object {
+    $serverAndCredential = @{}
+    if ($Server) {
+        $serverAndCredential.Add('Server', $Server)
+    }
+    if ($Credential) {
+        $serverAndCredential.Add('Credential', $Credential)
+    }
+
+    GetADOrganizationalUnit @params @serverAndCredential | ForEach-Object {
         # Determine if the OU has child objects. If so, allow it to be included.
         $params = @{
-            Filter      = { objectClass -eq 'organizationalUnit' -or objectClass -eq 'computer' }
+            Filter      = '(|(objectClass=organizationalUnit)(&(objectClass=computer)(objectCategory=computer)))'
             SearchBase  = $_.DistinguishedName
             SearchScope = 'OneLevel'
         }
-        if (Get-ADObject @params) {
-            'Creating group {0}' -f $_.Name | Write-Verbose
+        if (GetADObject @params @serverAndCredential) {
+            Write-Verbose ('Creating group {0}' -f $_.Name)
 
             $parentDN = $_.DistinguishedName
             if ($Recurse) {
                 RdcGroup $_.Name {
-                    RdcADGroup -Recurse -ComputerFilter $ComputerFilter
-                    RdcADComputer -Filter $ComputerFilter
+                    RdcADGroup -Recurse -ComputerFilter $ComputerFilter @serverAndCredential
+                    RdcADComputer -Filter $ComputerFilter @serverAndCredential
                 }
             } else {
                 RdcGroup $_.Name {
-                    RdcADComputer -Filter $ComputerFilter
+                    RdcADComputer -Filter $ComputerFilter @serverAndCredential
                 }
             }
         }

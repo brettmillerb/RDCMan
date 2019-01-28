@@ -18,7 +18,7 @@ function RdcDocument {
         [ScriptBlock]$Children
     )
 
-    $xDocument = $currentNode = [XDocument]::Parse('
+    $xDocument = $currentNode = [System.Xml.Linq.XDocument]::Parse('
         <?xml version="1.0" encoding="utf-8"?>
         <Rdc programVersion="2.7" schemaVersion="3">
             <file>
@@ -30,7 +30,7 @@ function RdcDocument {
             <connected />
             <favorites />
             <recentlyUsed />
-        </Rdc>'.Trim() -f $FileName)
+        </Rdc>'.Trim() -f ([System.IO.FileInfo]$Path).BaseName)
 
     if ($Children) {
         & $Children

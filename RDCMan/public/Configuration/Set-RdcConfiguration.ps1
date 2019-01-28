@@ -18,21 +18,26 @@ function Set-RdcConfiguration {
         # The default search mode is ADModule if the ActiveDirectory module is available on the computer. Otherwise the search mode defaults to ADSI.
         #
         # If the ActiveDirectory module is made available using implicit remoting this option must be set.
+        [Parameter(ParameterSetName = 'Update')]
         [ValidateSet('ADModule', 'ADSI')]
-        [String]$ADSearchMode,
+        [String]$SearchMode,
 
         # Reset the configuration to the default.
+        [Parameter(ParameterSetName = 'Reset')]
         [Switch]$Reset
     )
 
-    if ($Reset) {
+    if ($pscmdlet.ParameterSetName -eq 'Reset') {
+        [Boolean]$isADModulePresent = Get-Module ActiveDirectory -ListAvailable
+
         $Script:configuration = [PSCustomObject]@{
-            ADSearchMode = ('ADModule', 'ADSI')[[Boolean](Get-Module ActiveDirectory -ListAvailable)]
+            SearchMode   = ('ADSI', 'ADModule')[$isADModulePresent]
+            FilterFormat = ('LDAP', 'ADModule')[$isADModulePresent]
         }
     } else {
         foreach ($parameterName in $psboundparameters.Keys) {
             if ($Script:configuration.PSObject.Properties.Item($parameterName)) {
-                $Script:configuration.$parameterName = $psboundparameters[$parmeterName]
+                $Script:configuration.$parameterName = $psboundparameters[$parameterName]
             }
         }
     }
