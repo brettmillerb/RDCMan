@@ -11,7 +11,12 @@ function GetAdsiOrganizationalUnit {
     [CmdletBinding()]
     param (
         # A filter describing the organizational units to find.
+        [Parameter(ParameterSetName = 'UsingFilter')]
         [String]$Filter,
+
+        # Use identity instead of a filter to locate the OU.
+        [Parameter(ParameterSetName = 'ByIdentity')]
+        [String]$Identity,
 
         # The search base for this search.
         [String]$SearchBase,
@@ -26,7 +31,11 @@ function GetAdsiOrganizationalUnit {
         [PSCredential]$Credential
     )
 
-    if ($Filter -eq '*' -or -not $Filter) {
+    if ($Identity) {
+        $psboundparameters['Filter'] = '(&(objectClass=organizationalUnit)(distinguishedName={0}))' -f $Identity
+        $psboundparameters['SearchScope'] = 'Subtree'
+        $null = $psboundparameters.Remove('Identity')
+    } elseif ($Filter -eq '*' -or -not $Filter) {
         $psboundparameters['Filter'] = '(objectClass=organizationalUnit)'
     } else {
         $psboundparameters['Filter'] = '(&(objectClass=organizationalUnit){0})' -f $Filter

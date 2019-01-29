@@ -22,6 +22,9 @@ function GetADComputer {
         # The search scope for the search operation.
         [System.DirectoryServices.SearchScope]$SearchScope,
 
+        # Limit the number of results returned by a search. By default result set size is unlimited.
+        [Int32]$ResultSetSize,
+
         # The server to use for the search.
         [String]$Server,
 
@@ -44,7 +47,7 @@ function GetADComputer {
         $psboundparameters.Add('Filter', $Filter)
     }
 
-    if (Get-RdcConfiguration -Name ADSearchMode -Eq ADModule) {
+    if (Get-RdcConfiguration -Name SearchMode -Eq ADModule) {
         if ($FilterFormat -eq 'LDAP') {
             $null = $psboundparameters.Remove('Filter')
             $psboundparameters.Add('LdapFilter', $Filter)

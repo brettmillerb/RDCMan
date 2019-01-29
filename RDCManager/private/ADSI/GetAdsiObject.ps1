@@ -23,6 +23,9 @@ function GetAdsiObject {
         # The search scope for the search operation.
         [System.DirectoryServices.SearchScope]$SearchScope,
 
+        # Limit the number of results returned by a search. By default result set size is unlimited.
+        [Int32]$ResultSetSize,
+
         # The server to use to execute the search.
         [String]$Server,
 
@@ -50,6 +53,10 @@ function GetAdsiObject {
         PageSize    = 1000
     }
     $searcher.PropertiesToLoad.AddRange($Properties)
+
+    if ($ResultSetSize) {
+        $searcher.SizeLimit = $ResultSetSize
+    }
 
     Write-Debug 'SEARCHER:'
     Write-Debug ('    Filter     : {0}' -f $Filter)

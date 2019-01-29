@@ -25,7 +25,7 @@ function RdcADComputer {
         # Credentials to use when connecting to active directory.
         [PSCredential]$Credential = (Get-Variable RdcADCredential -ValueOnly -ErrorAction SilentlyContinue),
 
-        # If recurse is set, groups will be created representing OUs which contain computer objects.
+        # If recurse is set computer objects from child OUs will be added to the parent group.
         [Switch]$Recurse
     )
 

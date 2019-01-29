@@ -9,7 +9,7 @@ function RdcADGroup {
     [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
     param (
         # A filter for OU objects.
-        [Parameter(ParameterSetName = 'UsingFilter')]
+        [Parameter(Position = 1, ParameterSetName = 'UsingFilter')]
         [String]$Filter = '*',
 
         # The identity of a single OU.
@@ -63,23 +63,27 @@ function RdcADGroup {
 
     GetADOrganizationalUnit @params @serverAndCredential | ForEach-Object {
         # Determine if the OU has child objects. If so, allow it to be included.
+        Write-Debug 'Searching for child computer objects'
+        Write-Debug ('    SearchBase: {0}' -f $_.DistinguishedName)
+
         $params = @{
-            Filter      = '(|(objectClass=organizationalUnit)(&(objectClass=computer)(objectCategory=computer)))'
-            SearchBase  = $_.DistinguishedName
-            SearchScope = 'OneLevel'
+            Filter        = '*'
+            SearchBase    = $_.DistinguishedName
+            SearchScope   = 'Subtree'
+            ResultSetSize = 1
         }
-        if (GetADObject @params @serverAndCredential) {
+        if (GetADComputer @params @serverAndCredential) {
             Write-Verbose ('Creating group {0}' -f $_.Name)
 
             $parentDN = $_.DistinguishedName
             if ($Recurse) {
                 RdcGroup $_.Name {
                     RdcADGroup -Recurse -ComputerFilter $ComputerFilter @serverAndCredential
-                    RdcADComputer -Filter $ComputerFilter @serverAndCredential
+                    RdcADComputer -SearchBase $parentDN -Filter $ComputerFilter @serverAndCredential
                 }
             } else {
                 RdcGroup $_.Name {
-                    RdcADComputer -Filter $ComputerFilter @serverAndCredential
+                    RdcADComputer -SearchBase $parentDN -Filter $ComputerFilter @serverAndCredential -Recurse
                 }
             }
         }
