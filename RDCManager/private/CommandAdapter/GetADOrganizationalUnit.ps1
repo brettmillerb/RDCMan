@@ -8,6 +8,9 @@ function GetADOrganizationalUnit {
 
     [CmdletBinding()]
     param (
+        [Parameter(ParameterSetName = 'ByName')]
+        [String]$Name,
+
         # A filter to use for the search. If using the ActiveDirectory module this can either be an LDAP filter, or the specialised form used by the ActiveDirectory module.
         [Parameter(ParameterSetName = 'UsingFilter')]
         [String]$Filter,
@@ -26,10 +29,29 @@ function GetADOrganizationalUnit {
         [String]$Server,
 
         # Credentials to use when connecting to the server.
-        [PSCredential]$Credential
+        [PSCredential]$Credential,
+
+        # The filter format to use.
+        [String]$FilterFormat = (Get-RdcConfiguration -Name FilterFormat)
     )
 
+    if ($pscmdlet.ParameterSetName -eq 'ByName') {
+        $null = $psboundparameters.Remove('Name')
+
+        $FilterFormat = 'LDAP'
+        $Filter = '(name={0})' -f $Name
+        $psboundparameters.Add('Filter', $Filter)
+    }
+
+    if (-not $SearchBase) {
+        $null = $psboundparameters.Remove('SearchBase')
+    }
+
     if (Get-RdcConfiguration -Name SearchMode -Eq ADModule) {
+        if ($FilterFormat -eq 'LDAP') {
+            $null = $psboundparameters.Remove('Filter')
+            $psboundparameters.Add('LdapFilter', $Filter)
+        }
         Get-ADOrganizationalUnit @psboundparameters
     } else {
         GetAdsiOrganizationalUnit @psboundparameters

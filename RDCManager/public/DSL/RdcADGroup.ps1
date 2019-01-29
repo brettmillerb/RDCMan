@@ -8,8 +8,12 @@ function RdcADGroup {
 
     [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
     param (
+        # The identity of a single OU.
+        [Parameter(Mandatory, Position = 1, ParameterSetName = 'ByName')]
+        [String]$Name,
+
         # A filter for OU objects.
-        [Parameter(Position = 1, ParameterSetName = 'UsingFilter')]
+        [Parameter(ParameterSetName = 'UsingFilter')]
         [String]$Filter = '*',
 
         # The identity of a single OU.
@@ -45,6 +49,12 @@ function RdcADGroup {
         $params = @{
             Identity = $Identity
         }
+    } elseif ($pscmdlet.ParameterSetName -eq 'ByName') {
+        $params = @{
+            Name        = $Name
+            SearchBase  = $SearchBase
+            SearchScope = 'Subtree'
+        }
     } else {
         $params = @{
             Filter      = $Filter
@@ -79,11 +89,11 @@ function RdcADGroup {
             if ($Recurse) {
                 RdcGroup $_.Name {
                     RdcADGroup -Recurse -ComputerFilter $ComputerFilter @serverAndCredential
-                    RdcADComputer -SearchBase $parentDN -Filter $ComputerFilter @serverAndCredential
+                    RdcADComputer -Filter $ComputerFilter @serverAndCredential
                 }
             } else {
                 RdcGroup $_.Name {
-                    RdcADComputer -SearchBase $parentDN -Filter $ComputerFilter @serverAndCredential -Recurse
+                    RdcADComputer -Filter $ComputerFilter @serverAndCredential -Recurse
                 }
             }
         }
