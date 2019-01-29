@@ -8,7 +8,7 @@ function GetAdsiOrganizationalUnit {
         Use of the internal commands is optional. If used, all filters must be written as LDAP filter.
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'UsingFilter')]
     param (
         # A filter describing the organizational units to find.
         [Parameter(ParameterSetName = 'UsingFilter')]
