@@ -22,6 +22,11 @@ function Set-RdcConfiguration {
         [ValidateSet('ADModule', 'ADSI')]
         [String]$SearchMode,
 
+        # The format used for filters. By default LDAP format is used when the search mode is ADSI. The ActiveDirectory format is used if the module is used.
+        [Parameter(ParameterSetName = 'Update')]
+        [ValidateSet('ADModule', 'LDAP')]
+        [String]$FilterFormat,
+
         # Reset the configuration to the default.
         [Parameter(ParameterSetName = 'Reset')]
         [Switch]$Reset
@@ -35,6 +40,14 @@ function Set-RdcConfiguration {
             FilterFormat = ('LDAP', 'ADModule')[$isADModulePresent]
         }
     } else {
+        if ($SearchMode -and -not $FilterFormat) {
+            if ($SearchMode -eq 'ADSI') {
+                $psboundparameters['FilterFormat'] = 'LDAP'
+            } else {
+                $psboundparameters['FilterFormat'] = 'ADModule'
+            }
+        }
+
         foreach ($parameterName in $psboundparameters.Keys) {
             if ($Script:configuration.PSObject.Properties.Item($parameterName)) {
                 $Script:configuration.$parameterName = $psboundparameters[$parameterName]

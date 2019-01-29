@@ -46,7 +46,7 @@ function RdcLogonCredential {
         }
         $secureString = $Credential.Password
     } else {
-        $domainName = $CredentialHash['DomainName']
+        $domainName = $CredentialHash['Domain']
         $userName = $CredentialHash['UserName']
         $secureString = $CredentialHash['Password']
     }
