@@ -28,6 +28,7 @@ $public = @(
     'DSL\RdcDocument'
     'DSL\RdcGroup'
     'DSL\RdcLogonCredential'
+    'DSL\RdcRemoteDesktopSetting'
 )
 
 $functionsToExport = foreach ($command in $public) {
