@@ -36,7 +36,7 @@ function GetADObject {
         $psboundparameters.Add('Filter', $Filter)
     }
 
-    if (Get-RdcConfiguration -Name ADSearchMode -Eq ActiveDirectory) {
+    if (Get-RdcConfiguration -Name ADSearchMode -Eq ADModule) {
         if ($FilterFormat -eq 'LDAP') {
             $null = $psboundparameters.Remove('Filter')
             $psboundparameters.Add('LdapFilter', $Filter)

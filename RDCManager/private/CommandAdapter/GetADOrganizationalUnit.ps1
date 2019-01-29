@@ -24,7 +24,7 @@ function GetADOrganizationalUnit {
         [PSCredential]$Credential
     )
 
-    if (Get-RdcConfiguration -Name ADSearchMode -Eq ActiveDirectory) {
+    if (Get-RdcConfiguration -Name ADSearchMode -Eq ADModule) {
         Get-ADOrganizationalUnit @psboundparameters
     } else {
         GetAdsiOrganizationalUnit @psboundparameters
