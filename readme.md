@@ -12,7 +12,7 @@ Reworked by [Chris Dent - Indented Automation](https://github.com/indented-autom
 
 Generates a file based on a manually defined list of computers.
 ```powershell
-RdcDocument 'manual' -Save {
+RdcDocument 'manual' {
     RdcGroup 'Manual list' {
         RdcComputer @{
             Name = 'somehost1'
@@ -25,7 +25,7 @@ RdcDocument 'manual' -Save {
 ```
 ### Manual groups. Computers from AD.
 ```powershell
-RdcDocument 'simpleAD' -Save {
+RdcDocument 'simpleAD' {
     RdcGroup 'some servers' {
         RdcADComputer -Filter { name -like 'some*' } -Recurse
     }
@@ -36,13 +36,13 @@ RdcDocument 'simpleAD' -Save {
 ```
 ### Automatic creation from OU structure
 ```powershell
-RdcDocument 'SomeOU' -Save {
+RdcDocument 'SomeOU' {
     RdcADGroup -Identity 'OU=SomeOU,DC=somewhere,DC=com' -Recurse
 }
 ```
 ### Automatic creation from domain root
 ```powershell
-RdcDocument 'Domain' -Save {
+RdcDocument 'Domain' {
     RdcADGroup -Recurse
 }
 ```
