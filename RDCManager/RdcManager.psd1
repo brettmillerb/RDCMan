@@ -108,7 +108,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('RDCMan', 'RDCManager', 'RemoteDesktop')
+        Tags = @('RDCMan', 'RDCManager', 'Remote Desktop Connection Manager')
 
         # A URL to the license for this module.
         # LicenseUri = ''
