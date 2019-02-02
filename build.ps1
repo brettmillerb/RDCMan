@@ -18,12 +18,12 @@ function Get-FilesToMerge {
         }
 }
 
+# Remove out directory to allow rebuilding
 if (Test-Path -Path $PSScriptRoot\out) {
     Remove-Item -Path $Destination -Force -Confirm:$false -Recurse
 }
 
-# Remove out directory to allow rebuilding
-$null = New-Item -ItemType Directory -Name RDCManager -Path $PSScriptRoot\out
+$null = New-Item -ItemType Directory -Name RDCManager -Path $Destination
 
 Get-FilesToMerge
 
