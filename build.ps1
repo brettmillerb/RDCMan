@@ -14,7 +14,7 @@ function Get-FilesToMerge {
         Sort-Object FullName | ForEach-Object {
             "Adding {0} to the psm1 file" -f $_.BaseName | Write-Verbose
             Get-Content -Path $_.FullName | Add-Content -Path $PSScriptRoot\out\RDCManager\RDCManager.psm1
-            "`r" | Add-Content -Path $Destination\RDCManager\RDCManager.psm1
+            "`r" | Add-Content -Path $PSScriptRoot\out\RDCManager\RDCManager.psm1
         }
 }
 
