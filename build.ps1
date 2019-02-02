@@ -23,14 +23,14 @@ if (Test-Path -Path $PSScriptRoot\out) {
     Remove-Item -Path $Destination -Force -Confirm:$false -Recurse
 }
 
-$null = New-Item -ItemType Directory -Name RDCManager -Path $Destination
+$null = New-Item -ItemType Directory -Name RDCManager -Path $PSScriptRoot\out
 
 Get-FilesToMerge
 
 "Adding InitializeModule to the psm1 file" | Write-Verbose
-"InitializeModule" | Add-Content -Path $Destination\RDCManager\RDCManager.psm1
+"InitializeModule" | Add-Content -Path $PSScriptRoot\out\RDCManager\RDCManager.psm1
 
 "Copying Manifest file to {0}" -f $Destination | Write-Verbose
-Copy-Item -Path $PSScriptRoot\RDCManager\*.psd1 -Destination $Destination\RDCManager
+Copy-Item -Path $PSScriptRoot\RDCManager\*.psd1 -Destination $PSScriptRoot\out\RDCManager
 
 #$content -replace "^FunctionsToExport = '[*]'$", ("FunctionsToExport = @('{0}'`r`n)" -f ($pubfunctions -join "',`r`n`t'"))
