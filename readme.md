@@ -33,7 +33,7 @@ RdcDocument MyServers {
 }
 ```
 #### Output
-![RDCManBasicOutput](/img/ZMRivZa5sA.png)
+![RDCManBasicOutput](/RDCManager/img/ZMRivZa5sA.png)
 
 ### Generating a file with specific Active Directory filtering
 ```powershell
@@ -61,7 +61,7 @@ RdcDocument 'Domain' {
 ```
 
 #### Output
-![RDCManOutput](/img/xIkQfDVql2.png)
+![RDCManOutput](/RDCManager/img/xIkQfDVql2.png)
 
 ## Additional Functionality
 
