@@ -1,3 +1,5 @@
+![PowerShell Gallery](https://img.shields.io/powershellgallery/v/RdcManager?style=flat-square) [![Build Status](https://dev.azure.com/brettmillerb/RDCMan/_apis/build/status/RDCMan%20Build?branchName=master)](https://dev.azure.com/brettmillerb/RDCMan/_build/latest?definitionId=1&branchName=master)
+
 # Remote Desktop Manager File Generator
 
 ~~Idea taken from Kevin Marquette's RDCMan DSL to generate the entire XML for a new file.~~
