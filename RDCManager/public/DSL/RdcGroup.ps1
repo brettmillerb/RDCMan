@@ -15,12 +15,11 @@ function RdcGroup {
         throw ('{0} must be nested in RdcDocument or RdcGroup: {1}' -f $myinvocation.InvocationName, $_.Exception.Message)
     }
 
-    $xElement = $currentNode = [System.Xml.Linq.XElement]('
-        <group>
-            <properties>
-                <name>{0}</name>
-            </properties>
-        </group>' -f $Name)
+    $xElement = $currentNode = [System.Xml.Linq.XElement]::new('group',
+        [System.Xml.Linq.XElement]::new('properties',
+            [System.Xml.Linq.XElement]::new('name', $Name)
+        )
+    )
 
     if ($parentNode -is [System.Xml.Linq.XDocument]) {
         $parentNode.Element('Rdc').Element('file').Add($xElement)
