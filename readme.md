@@ -35,7 +35,6 @@ RdcDocument MyServers {
 #### Output
 ![RDCManBasicOutput](/RDCManager/img/ZMRivZa5sA.png)
 
-
 ### Generating a file with specific Active Directory filtering
 ```powershell
 RdcDocument MyServers {
