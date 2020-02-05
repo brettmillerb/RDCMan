@@ -97,5 +97,11 @@ function RdcLogonCredential {
             <domain>{2}</domain>
         </logonCredentials>' -f $username, $encryptedPassword, $domainName)
 
-    $parentNode.Element('properties').AddAfterSelf($xElement)
+    if ($parentNode.NodeType -eq 'Document') {
+        $propertiesElement = $parentNode.FirstNode.Element('file').Element('properties')
+    }
+    else {
+        $propertiesElement = $parentNode.Element('properties')
+    }
+    $propertiesElement.AddAfterSelf($xElement)
 }
