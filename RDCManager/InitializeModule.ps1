@@ -1,5 +1,4 @@
-using namespace System.Xml.Linq
-using assembly System.Xml.Linq
+Add-Type -AssemblyName System.Xml.Linq
 
 function InitializeModule {
     Set-RdcConfiguration -Reset
