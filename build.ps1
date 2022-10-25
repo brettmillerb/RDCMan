@@ -10,7 +10,7 @@ function Get-FilesToMerge {
         $Path = $PSScriptRoot
     )
 
-    Get-ChildItem -Path $PSScriptRoot -Recurse -Include *.ps1 -Exclude build.ps1 |
+    Get-ChildItem -Path $PSScriptRoot -Recurse -Include *.ps1 -Exclude build.ps1,*.Tests.ps1 |
         Sort-Object FullName | ForEach-Object {
             "Adding {0} to the psm1 file" -f $_.BaseName | Write-Verbose
             Get-Content -Path $_.FullName | Add-Content -Path $PSScriptRoot\out\RDCManager\RDCManager.psm1
