@@ -1,0 +1,23 @@
+name: Unit tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Perform Pester tests
+        shell: pwsh
+        run: |
+          Invoke-Pester -Passthru
